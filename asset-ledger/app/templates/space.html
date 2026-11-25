@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}{{ space.name }} — 空间{% endblock %}
+{% block body %}
+<p class="crumbs">{{ path }}</p>
+<div class="page-toolbar">
+  <h1>{{ space.name }}</h1>
+  <p class="muted">{{ kind_label }}{% if space.rack_height %} · 高度 {{ space.rack_height }} U{% endif %}</p>
+</div>
+{% if space.note %}<p>{{ space.note }}</p>{% endif %}
+
+{% if space.kind == "rack" %}
+<section class="panel">
+  <h2>机柜正面占用</h2>
+  <table class="rack">
+    <tbody>
+      {% for row in rack_rows %}
+      <tr class="{% if row.asset %}filled{% endif %}">
+        <td class="u">{{ row.u }}</td>
+        <td>{% if row.asset %}{{ row.asset.code }} {{ row.asset.name }}{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endif %}
+
+<section class="panel">
+  <h2>子空间</h2>
+  {% if children %}
+  <ul>
+    {% for child in children %}
+    <li><a href="/spaces/{{ child.id }}">{{ child.name }}</a> <span class="muted">{{ child.kind_label }}</span></li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="muted">没有子空间。</p>
+  {% endif %}
+  {% if child_kinds %}
+  <form method="post" action="/spaces/{{ space.id }}/children">
+    <input type="hidden" name="parent_id" value="{{ space.id }}">
+    <label>名称 <input name="name" value=""></label>
+    <label>类型
+      <select name="kind">
+        {% for code, label in child_kinds %}
+        <option value="{{ code }}">{{ label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>说明 <textarea name="note"></textarea></label>
+    <label>机柜高度 <input name="rack_height" value="{{ child_height }}"></label>
+    <button type="submit">添加子空间</button>
+  </form>
+  {% endif %}
+</section>
+
+<section class="panel">
+  <h2>本范围资产</h2>
+  <p><a href="/spaces/{{ space.id }}/export.xlsx">导出 Excel</a></p>
+  {% if assets %}
+  <ul>
+    {% for item in assets %}
+    <li><a href="/assets/{{ item.id }}">{{ item.code }}</a> {{ item.name }} <span class="muted">{{ item.kind_label }} {{ item.location }}</span></li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="muted">这个范围还没有资产。</p>
+  {% endif %}
+</section>
+
+<section class="panel">
+  <h2>修改</h2>
+  <form method="post" action="/spaces/{{ space.id }}">
+    <label>名称 <input name="name" value="{{ form.name }}"></label>
+    <label>类型
+      <select name="kind">
+        {% for code, label in space_kinds %}
+        <option value="{{ code }}" {% if form.kind == code %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>父级
+      <select name="parent_id">
+        <option value="" {% if not form.parent_id %}selected{% endif %}>（根）</option>
+        {% for item in parent_options %}
+        <option value="{{ item.id }}" {% if form.parent_id == item.id|string %}selected{% endif %}>{{ item.path }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>说明 <textarea name="note">{{ form.note }}</textarea></label>
+    <label>机柜高度 <input name="rack_height" value="{{ form.rack_height }}"></label>
+    <button type="submit">保存</button>
+  </form>
+  <form method="post" action="/spaces/{{ space.id }}/delete" class="danger">
+    <label><input type="checkbox" name="confirm" value="yes"> 确认删除</label>
+    <button type="submit">删除</button>
+  </form>
+</section>
+{% endblock %}

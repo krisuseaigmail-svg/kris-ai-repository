@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}空间 — 机房/办公资产录入台账{% endblock %}
+{% block body %}
+<div class="page-toolbar">
+  <h1>空间</h1>
+</div>
+{% if not rows %}
+<p>请先建立机房、仓库或办公区，工位要建在办公区下。</p>
+{% endif %}
+<ul class="tree">
+  {% for row in rows %}
+  <li style="margin-left: {{ row.depth * 1.25 }}rem">
+    <a href="/spaces/{{ row.id }}">{{ row.name }}</a>
+    <span class="muted">{{ row.kind_label }}</span>
+  </li>
+  {% endfor %}
+</ul>
+<section class="panel">
+  <h2>新建根空间</h2>
+  <form method="post" action="/spaces">
+    <input type="hidden" name="parent_id" value="">
+    <label>名称 <input name="name" value="{{ form.name }}"></label>
+    <label>类型
+      <select name="kind">
+        {% for code, label in root_kinds %}
+        <option value="{{ code }}" {% if form.kind == code %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>说明 <textarea name="note">{{ form.note }}</textarea></label>
+    <input type="hidden" name="rack_height" value="">
+    <button type="submit">保存</button>
+  </form>
+</section>
+{% endblock %}

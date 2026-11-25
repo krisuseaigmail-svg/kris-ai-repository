@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}机房/办公资产录入台账{% endblock %}</title>
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+  <header>
+    <div class="header-bar">
+      <strong class="brand">资产台账</strong>
+      <nav>
+        <a href="/">首页</a>
+        <a href="/spaces">空间</a>
+        <a href="/assets">资产</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    {% if error %}<p class="banner" role="alert">{{ error }}</p>{% endif %}
+    {% block body %}{% endblock %}
+  </main>
+</body>
+</html>

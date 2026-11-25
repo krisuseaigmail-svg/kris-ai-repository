@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}首页 — 机房/办公资产录入台账{% endblock %}
+{% block body %}
+<h1>首页</h1>
+<dl class="stats">
+  <div><dt>空间</dt><dd id="space-count">{{ space_count }}</dd></div>
+  <div><dt>资产</dt><dd id="asset-count">{{ asset_count }}</dd></div>
+  <div><dt>硬盘</dt><dd id="disk-count">{{ disk_count }}</dd></div>
+</dl>
+<h2>最近录入</h2>
+{% if recent %}
+<ul class="recent">
+  {% for item in recent %}
+  <li><a href="/assets/{{ item.id }}">{{ item.code }}</a> {{ item.name }} <span class="muted">{{ item.kind_label }} {{ item.location }}</span></li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="muted">还没有资产。</p>
+{% endif %}
+{% endblock %}

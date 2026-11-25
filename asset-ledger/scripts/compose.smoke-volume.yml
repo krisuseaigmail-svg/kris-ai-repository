@@ -1,0 +1,5 @@
+# 只给 scripts/smoke-isolated.sh 使用。
+# 不修改 docker-compose.yml 里的生产卷名 delivery_ledger_pgdata。
+volumes:
+  pgdata:
+    name: ${SMOKE_VOLUME_NAME:-asset_ledger_smoke_pgdata}

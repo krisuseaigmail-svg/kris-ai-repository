@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% from "partials/asset_fields.html" import asset_fields %}
+{% block title %}{{ asset.code }} — 资产{% endblock %}
+{% block body %}
+<h1>{{ asset.code }}</h1>
+<p class="muted">{{ kind_label }} · {{ location }}</p>
+{% if asset.created_at %}<p class="muted">登记时间 {{ format_created(asset.created_at) }}</p>{% endif %}
+<p class="hint">本版只记录一块 MAC</p>
+<form method="post" action="/assets/{{ asset.id }}">
+  {{ asset_fields(form, kind_options, space_options, server_options, place_hint) }}
+  <button type="submit">保存</button>
+</form>
+<form method="post" action="/assets/{{ asset.id }}/delete">
+  <button type="submit">删除</button>
+</form>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% macro asset_fields(form, kind_options, space_options, server_options, place_hint) %}
+<label>资产编号 <input name="code" value="{{ form.code }}"></label>
+<label>序列号 <input name="serial" value="{{ form.serial }}"></label>
+<label>名称 <input name="name" value="{{ form.name }}"></label>
+<label>类型
+  <select name="kind">
+    {% for code, label in kind_options %}
+    <option value="{{ code }}" {% if form.kind == code %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+</label>
+<label>型号 <input name="model" value="{{ form.model }}"></label>
+<label>BMC IP <input name="bmc_ip" value="{{ form.bmc_ip }}"></label>
+<label>业务 IP <input name="biz_ip" value="{{ form.biz_ip }}"></label>
+<label>MAC
+  <input name="mac" value="{{ form.mac }}">
+  <span class="hint">本版只记录一块 MAC</span>
+</label>
+<label>放在空间
+  <select name="location_space_id">
+    <option value="">不选择</option>
+    {% for item in space_options %}
+    <option value="{{ item.id }}" {% if form.location_space_id == item.id|string %}selected{% endif %}>{{ item.path }}（{{ item.kind_label }}）</option>
+    {% endfor %}
+    {% set known_spaces = space_options | map(attribute='id') | map('string') | list %}
+    {% if form.location_space_id and form.location_space_id not in known_spaces %}
+    <option value="{{ form.location_space_id }}" selected>{{ form.location_space_id }}</option>
+    {% endif %}
+  </select>
+</label>
+<label>挂在服务器
+  <select name="mounted_asset_id">
+    <option value="">不选择</option>
+    {% for item in server_options %}
+    <option value="{{ item.id }}" {% if form.mounted_asset_id == item.id|string %}selected{% endif %}>{{ item.code }} {{ item.name }}</option>
+    {% endfor %}
+    {% set known_mounts = server_options | map(attribute='id') | map('string') | list %}
+    {% if form.mounted_asset_id and form.mounted_asset_id not in known_mounts %}
+    <option value="{{ form.mounted_asset_id }}" selected>{{ form.mounted_asset_id }}</option>
+    {% endif %}
+  </select>
+</label>
+{% if place_hint %}<p>请先创建可以放置这种设备的空间</p>{% endif %}
+<label>起始 U <input name="start_u" value="{{ form.start_u }}"></label>
+<label>占用高度 <input name="height_u" value="{{ form.height_u }}"></label>
+<label>位置备注 <input name="location_note" value="{{ form.location_note }}"></label>
+<label>备注 <textarea name="remark">{{ form.remark }}</textarea></label>
+{% endmacro %}

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}资产 — 机房/办公资产录入台账{% endblock %}
+{% block body %}
+<div class="page-toolbar">
+  <h1>资产</h1>
+  <p><a href="/assets/new">新建资产</a></p>
+</div>
+<form method="get" action="/assets" class="filters">
+  <label>类型
+    <select name="kind">
+      {% for code, label in kind_options %}
+      <option value="{{ code }}" {% if kind == code %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>空间
+    <select name="space_id">
+      <option value="">全部</option>
+      {% for item in space_options %}
+      <option value="{{ item.id }}" {% if space_id == item.id|string %}selected{% endif %}>{{ item.path }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>关键字 <input name="q" value="{{ q }}" placeholder="编号、序列号、名称、型号"></label>
+  <button type="submit">筛选</button>
+</form>
+<p>
+  {% if kind or space_id or q %}
+  <a href="/assets/export.xlsx?kind={{ kind }}&amp;space_id={{ space_id }}&amp;q={{ q }}">导出 Excel</a>
+  {% else %}
+  <a href="/assets/export.xlsx">导出 Excel</a>
+  {% endif %}
+  <span class="muted">共 {{ total }} 条，本页 {{ rows|length }} 条</span>
+</p>
+<table class="grid">
+  <thead>
+    <tr>
+      <th>资产编号</th><th>序列号</th><th>名称</th><th>类型</th><th>位置</th><th>BMC IP</th><th>业务 IP</th><th>MAC</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in rows %}
+    <tr>
+      <td><a href="/assets/{{ row.id }}">{{ row.code }}</a></td>
+      <td>{{ row.serial }}</td>
+      <td>{{ row.name }}</td>
+      <td>{{ row.kind_label }}</td>
+      <td>{{ row.location }}</td>
+      <td>{{ row.bmc_ip }}</td>
+      <td>{{ row.biz_ip }}</td>
+      <td>{{ row.mac }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% if page_count > 1 %}
+<p class="pager">
+  {% if page_no > 1 %}<a href="/assets?kind={{ kind }}&amp;space_id={{ space_id }}&amp;q={{ q }}&amp;page={{ page_no - 1 }}">上一页</a>{% endif %}
+  <span>第 {{ page_no }} / {{ page_count }} 页</span>
+  {% if page_no < page_count %}<a href="/assets?kind={{ kind }}&amp;space_id={{ space_id }}&amp;q={{ q }}&amp;page={{ page_no + 1 }}">下一页</a>{% endif %}
+</p>
+{% endif %}
+{% endblock %}
