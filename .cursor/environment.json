@@ -1,0 +1,6 @@
+{
+  "name": "kris-ai-repository",
+  "install": "bash .cursor/install.sh",
+  "start": "true"
+}
+
